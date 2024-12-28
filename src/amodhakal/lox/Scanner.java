@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Scanner {
-    private String source;
+    private final String source;
     private Integer start = 0;
     private Integer current = 0;
     private Integer line = 1;
@@ -54,7 +54,82 @@ public class Scanner {
     }
 
     private void scanToken() {
-        // TODO: Add scanning
+        Character ch = advance();
+        switch (ch) {
+            case '(':
+                addToken(TokenType.LEFT_PAREN);
+                break;
+            case ')':
+                addToken(TokenType.RIGHT_PAREN);
+                break;
+            case '{':
+                addToken(TokenType.LEFT_BRACE);
+                break;
+            case '}':
+                addToken(TokenType.RIGHT_BRACE);
+                break;
+            case ',':
+                addToken(TokenType.COMMA);
+                break;
+            case '.':
+                addToken(TokenType.DOT);
+                break;
+            case '-':
+                addToken(TokenType.MINUS);
+                break;
+            case '+':
+                addToken(TokenType.PLUS);
+                break;
+            case ';':
+                addToken(TokenType.SEMICOLON);
+                break;
+            case '*':
+                addToken(TokenType.STAR);
+                break;
+            case '!':
+                addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+                break;
+            case '=':
+                addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+                break;
+            case '<':
+                addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+                break;
+            case '>':
+                addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+                break;
+            case '/':
+                if (match('/')) {
+                    while (peek() != '\n' && !isAtEnd()) advance();
+                } else {
+                    addToken(TokenType.SLASH);
+                }
+                break;
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+            case '\n':
+                line++;
+                break;
+            case '"':
+                string();
+                break;
+            case 'o':
+                if (match('r')) {
+                    addToken(TokenType.OR);
+                }
+                break;
+            default:
+                if (isDigit(ch)) {
+                    number();
+                } else if (isAlpha(ch)) {
+                    identifier();
+                } else {
+                    Lox.error(line, "Unexpected character.");
+                }
+                break;
+        }
     }
 
     private void identifier() {
@@ -77,7 +152,7 @@ public class Scanner {
     }
 
     private void string() {
-        while (peek() != '"' && isAtEnd()) {
+        while (peek() != '"' && !isAtEnd()) {
             if (peek() == '\n') line++;
             advance();
         }
