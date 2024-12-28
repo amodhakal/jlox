@@ -39,7 +39,7 @@ public class Lox {
         }
     }
 
-    private static void error(Integer line, String message) {
+    static void error(Integer line, String message) {
         report(line, "", message);
     }
 
