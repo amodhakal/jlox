@@ -35,7 +35,7 @@ public class Scanner {
     }
 
     public Scanner(String source) {
-        source = source;
+        this.source = source;
         tokens = new ArrayList<>();
     }
 
